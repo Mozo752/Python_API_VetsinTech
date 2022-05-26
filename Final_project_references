@@ -1,0 +1,110 @@
+#####ITP WEEK 3 DAY 3 SOLUTION#####
+
+
+import requests
+import json
+import openpyxl
+from openpyxl.styles import Font
+# using the requests package, we can make API calls to retrieve JSON
+# and storing it into a variable here called "response"
+response = requests.get("https://rickandmortyapi.com/api/character")
+# verify the response status as 200
+# print(response)
+# verify the raw string data of the response
+# print(response.text)
+# load as a python json object and store into a variable called "clean_data"
+clean_data = json.loads(response.text)
+# print(clean_data)
+# go through the results,
+result = clean_data["results"]
+# print(result[0])
+# print(result[0]['location']['name'])
+wb = workbook("./input.xlsx")
+sheet = wb['Sheet1']
+sheet['A1'] = "Name"
+# sheet['A1'].font = Font(bold = True)
+sheet['B1'] = "Species"
+# sheet['B1'].font = Font(bold = True)
+sheet['C1'] = "Gender"
+# sheet['C1'].font = Font(bold = True)
+sheet['D1'] = "Location"
+# sheet['D1'].font = Font(bold = True)
+header_list = [sheet['A1'], sheet['B1'], sheet['C1'], sheet['D1']]
+for header in header_list:
+    header.font = Font(bold = True)
+counter = 2
+# for each row in an excel spreadsheet
+for char in result:
+    # print("Name: " + char['name'])
+    sheet['A' + str(counter)] = char['name']
+    # print("Species: " + char['species'])
+    sheet['B' + str(counter)] = char['species']
+    # print("Gender: " + char["gender"])
+    sheet['C' + str(counter)] = char['gender']
+    # print("Location: " + char['location']['name'])
+    sheet['D' + str(counter)] = char['location']['name']
+    counter+=1
+# grab the name, species, gender, location name
+wb.save('./output.xlsx')
+
+
+#########PARTIAL WORK WITH TYLER FROM 24MAY###########
+
+import requests
+import json
+import openpyxl
+from openpyxl import load_workbook
+
+# 
+# assign url to variable
+url = "https://motorcycle-specs-database.p.rapidapi.com/category"
+
+headers = {
+	"X-RapidAPI-Host": "motorcycle-specs-database.p.rapidapi.com",
+	"X-RapidAPI-Key": "10e754ff30msh61f2334dd93dd43p1a4287jsnaa36b0ccdc83"
+}
+
+response = requests.request("GET", url, headers=headers)
+
+#check response status of url
+#print response 
+print(response)
+
+#print content / response.text
+#print(response.text)
+
+#Assign response object to variable (json loads)
+clean_data = json.loads(response.text)
+#print the cleaned data
+#print(clean_data)
+
+
+for i in range(len(clean_data)):
+    result = clean_data[i]["name"]
+    print(result)
+    
+#create a workbook
+wb = load_workbook('empty_book.xlsx')
+ws = wb.active
+#Create a spreadsheet page
+sheet = wb.create_sheet("sheet1")
+
+
+#Designate columns
+sheet['A1'] = "id"
+# sheet['A1'].font = openpyxl.styles.Font(bold=True)
+sheet['B1'] = "name"
+ws.title = "Motorcylces"
+
+header_list = [sheet['A1'], sheet['B1']]
+
+#Loop through the columns
+for i in range(len(header_list)):
+    #change the font to bold
+    header_list[i].font = openpyxl.styles.Font(bold=True)
+    
+#Loop through data from api
+    #fill cell falues with appropriate data
+    
+#Save the workbook
+wb.save('empty_workbook.xlsx')
